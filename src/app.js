@@ -7,6 +7,7 @@ const cors = require("cors");
 const connectMongo = require("../config/mongoose");
 const indexRouter = require("../routes/index");
 const authRouter = require("../routes/userAuth");
+const captainRoute = require("../routes/captain.routes");
 
 const app = express();
 
@@ -28,6 +29,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
+// captain is driver
+app.use("/captain", captainRoute);
 // Error handler
 app.use((err, req, res, next) => {
   // render the error page

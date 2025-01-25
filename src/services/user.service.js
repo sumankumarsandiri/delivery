@@ -5,11 +5,11 @@ const createUser = async ({ fullname, email, password }) => {
   if (!fullname || !email || !password) {
     throw new Error("All fields are required");
   }
-  // Check if the user already exists
-  const existingUser = await userSchema.findOne({ email });
-  if (existingUser) {
-    throw new Error("User already registered");
-  }
+  // // Check if the user already exists
+  // const existingUser = await userSchema.findOne({ email });
+  // if (existingUser) {
+  //   throw new Error("User already registered");
+  // }
   const user = await userSchema.create({ fullname, email, password });
   return user;
 };

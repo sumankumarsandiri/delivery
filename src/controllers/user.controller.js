@@ -22,6 +22,12 @@ const registerUser = async (req, res, next) => {
     console.log(req.body);
     const { email, fullname, password } = req.body;
 
+    // Check if the user already exists
+    const existingUser = await userSchema.findOne({ email });
+    if (existingUser) {
+      throw new Error("User already exist");
+    }
+
     const newUser = await userService.createUser({
       fullname,
       email,

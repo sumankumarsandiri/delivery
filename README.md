@@ -265,6 +265,136 @@ Response Body:
 }
 ```
 
+### 6. Register Captain
+
+**Endpoint:** `/captain/register`
+
+**Method:** `POST`
+
+**Description:** This endpoint registers a new captain.
+
+**Request Body:**
+
+```json
+{
+  "email": "captain@example.com",
+  "fullname": "Jane Doe",
+  "password": "password123",
+  "vehicle": {
+    "color": "red",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+**Response:**
+
+Status Code: 200 OK
+Response Body:
+
+```json
+{
+  "success": 1,
+  "message": "Captain registered successfully",
+  "status": 200,
+  "data": {
+    "captain": {
+      "_id": "60d0fe4f5311236168a109cb",
+      "fullname": "Jane Doe",
+      "email": "captain@example.com",
+      "vehicle": {
+        "color": "red",
+        "plate": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      },
+      "createdAt": "2023-10-10T10:00:00.000Z",
+      "updatedAt": "2023-10-10T10:00:00.000Z"
+    }
+  }
+}
+```
+
+Status Code: 400 Bad Request
+Response Body:
+
+```json
+{
+  "errors": [
+    {
+      "msg": "Invalid Email",
+      "param": "email",
+      "location": "body"
+    },
+    {
+      "msg": "fullName is required",
+      "param": "fullname",
+      "location": "body"
+    },
+    {
+      "msg": "Password must be at least 6 characters long",
+      "param": "password",
+      "location": "body"
+    },
+    {
+      "msg": "Color must be at least 3 characters long",
+      "param": "vehicle.color",
+      "location": "body"
+    },
+    {
+      "msg": "Plate must be at least 3 characters long",
+      "param": "vehicle.plate",
+      "location": "body"
+    },
+    {
+      "msg": "Capacity must be at least 1",
+      "param": "vehicle.capacity",
+      "location": "body"
+    },
+    {
+      "msg": "Vehicle type must be bike, car or truck",
+      "param": "vehicle.vehicleType",
+      "location": "body"
+    }
+  ]
+}
+```
+
+Example Response:
+
+```json
+{
+  "success": 1,
+  "message": "Captain registered successfully",
+  "data": {
+    "captain": {
+      "fullname": {
+        "firstname": "test_captain_firstname",
+        "lastname": "test_captain_lastname"
+      },
+      "email": "testcaptain02@gmail.com",
+      "password": "$2b$10$uVCaMRQsmYUfFMyaAFxPPeymHLbRiZzwxwiTFg/5Z2.zZwR5KXaf2",
+      "status": "inactive",
+      "vehicle": {
+        "color": "red",
+        "plate": "TX 01 ER 1234",
+        "capacity": 2,
+        "vehicleType": "bike"
+      },
+      "_id": "6794dc38249561033d248f59",
+      "last_Login": "2025-01-25T12:42:32.684Z",
+      "createdAt": "2025-01-25T12:42:32.688Z",
+      "updatedAt": "2025-01-25T12:42:32.688Z",
+      "__v": 0
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI...."
+  },
+  "status": 200
+}
+```
+
 ## How to Use
 
 ### Register User:
@@ -286,6 +416,10 @@ Send a GET request to `/auth/profile` with the Authorization header containing a
 ### Logout User:
 
 Send a GET request to `/auth/logout` with the Authorization header containing a valid JWT token.
+
+### Register Captain:
+
+Send a POST request to `/captain/register` with the required fields in the request body.
 
 ## Example Requests
 
@@ -331,4 +465,22 @@ curl -X GET http://localhost:3030/auth/profile \
 ```sh
 curl -X GET http://localhost:3030/auth/logout \
   -H "Authorization: Bearer <token>"
+```
+
+### Register Captain
+
+```sh
+curl -X POST http://localhost:3030/captain/register \
+  -H "Content-Type: application/json" \
+  -d '{
+        "email": "captain@example.com",
+        "fullname": "Jane Doe",
+        "password": "password123",
+        "vehicle": {
+          "color": "red",
+          "plate": "ABC123",
+          "capacity": 4,
+          "vehicleType": "car"
+        }
+      }'
 ```
