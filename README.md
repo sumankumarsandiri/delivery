@@ -22,8 +22,8 @@
 
 **Response:**
 
-Status Code: 200 OK
-Response Body:
+- **Status Code:** 200 OK
+- **Response Body:**
 
 ```json
 {
@@ -48,8 +48,8 @@ Response Body:
 }
 ```
 
-Status Code: 400 Bad Request
-Response Body:
+- **Status Code:** 400 Bad Request
+- **Response Body:**
 
 ```json
 {
@@ -73,8 +73,8 @@ Response Body:
 }
 ```
 
-Status Code: 409 Conflict
-Response Body:
+- **Status Code:** 409 Conflict
+- **Response Body:**
 
 ```json
 {
@@ -94,12 +94,12 @@ Response Body:
 
 **Headers:**
 
-Authorization: Bearer <token>
+- Authorization: Bearer <token>
 
 **Response:**
 
-Status Code: 200 OK
-Response Body:
+- **Status Code:** 200 OK
+- **Response Body:**
 
 ```json
 {
@@ -115,8 +115,8 @@ Response Body:
 }
 ```
 
-Status Code: 401 Unauthorized
-Response Body:
+- **Status Code:** 401 Unauthorized
+- **Response Body:**
 
 ```json
 {
@@ -144,8 +144,8 @@ Response Body:
 
 **Response:**
 
-Status Code: 200 OK
-Response Body:
+- **Status Code:** 200 OK
+- **Response Body:**
 
 ```json
 {
@@ -170,8 +170,8 @@ Response Body:
 }
 ```
 
-Status Code: 400 Bad Request
-Response Body:
+- **Status Code:** 400 Bad Request
+- **Response Body:**
 
 ```json
 {
@@ -200,12 +200,12 @@ Response Body:
 
 **Headers:**
 
-Authorization: Bearer <token>
+- Authorization: Bearer <token>
 
 **Response:**
 
-Status Code: 200 OK
-Response Body:
+- **Status Code:** 200 OK
+- **Response Body:**
 
 ```json
 {
@@ -222,8 +222,8 @@ Response Body:
 }
 ```
 
-Status Code: 401 Unauthorized
-Response Body:
+- **Status Code:** 401 Unauthorized
+- **Response Body:**
 
 ```json
 {
@@ -242,12 +242,12 @@ Response Body:
 
 **Headers:**
 
-Authorization: Bearer <token>
+- Authorization: Bearer <token>
 
 **Response:**
 
-Status Code: 200 OK
-Response Body:
+- **Status Code:** 200 OK
+- **Response Body:**
 
 ```json
 {
@@ -255,8 +255,8 @@ Response Body:
 }
 ```
 
-Status Code: 401 Unauthorized
-Response Body:
+- **Status Code:** 401 Unauthorized
+- **Response Body:**
 
 ```json
 {
@@ -278,11 +278,14 @@ Response Body:
 ```json
 {
   "email": "captain@example.com",
-  "fullname": "Jane Doe",
+  "fullname": {
+    "firstname": "Jane",
+    "lastname": "Doe"
+  },
   "password": "password123",
   "vehicle": {
     "color": "red",
-    "plate": "ABC123",
+    "plate": "TX 01 ER 1234",
     "capacity": 4,
     "vehicleType": "car"
   }
@@ -291,8 +294,8 @@ Response Body:
 
 **Response:**
 
-Status Code: 200 OK
-Response Body:
+- **Status Code:** 200 OK
+- **Response Body:**
 
 ```json
 {
@@ -302,11 +305,14 @@ Response Body:
   "data": {
     "captain": {
       "_id": "60d0fe4f5311236168a109cb",
-      "fullname": "Jane Doe",
+      "fullname": {
+        "firstname": "Jane",
+        "lastname": "Doe"
+      },
       "email": "captain@example.com",
       "vehicle": {
         "color": "red",
-        "plate": "ABC123",
+        "plate": "TX 01 ER 1234",
         "capacity": 4,
         "vehicleType": "car"
       },
@@ -317,8 +323,8 @@ Response Body:
 }
 ```
 
-Status Code: 400 Bad Request
-Response Body:
+- **Status Code:** 400 Bad Request
+- **Response Body:**
 
 ```json
 {
@@ -362,7 +368,27 @@ Response Body:
 }
 ```
 
-Example Response:
+### 7. Login Captain
+
+**Endpoint:** `/captain/login`
+
+**Method:** `POST`
+
+**Description:** This endpoint logs in a captain.
+
+**Request Body:**
+
+```json
+{
+  "email": "captain@example.com",
+  "password": "password123"
+}
+```
+
+**Response:**
+
+- **Status Code:** 200 OK
+- **Response Body:**
 
 ```json
 {
@@ -370,6 +396,7 @@ Example Response:
   "message": "Captain registered successfully",
   "data": {
     "captain": {
+      "_id": "60d0fe4f5311236168a109cb",
       "fullname": {
         "firstname": "test_captain_firstname",
         "lastname": "test_captain_lastname"
@@ -392,6 +419,16 @@ Example Response:
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI...."
   },
   "status": 200
+}
+```
+
+- **Status Code:** 401 Unauthorized
+- **Response Body:**
+
+```json
+{
+  "success": 0,
+  "message": "Invalid or expired token"
 }
 ```
 
@@ -420,6 +457,18 @@ Send a GET request to `/auth/logout` with the Authorization header containing a 
 ### Register Captain:
 
 Send a POST request to `/captain/register` with the required fields in the request body.
+
+### Login Captain:
+
+Send a POST request to `/captain/login` with the required fields in the request body.
+
+### Get Captain Profile:
+
+Send a GET request to `/captain/profile` with the Authorization header containing a valid JWT token.
+
+### Logout Captain:
+
+Send a GET request to `/captain/logout` with the Authorization header containing a valid JWT token.
 
 ## Example Requests
 
@@ -474,7 +523,10 @@ curl -X POST http://localhost:3030/captain/register \
   -H "Content-Type: application/json" \
   -d '{
         "email": "captain@example.com",
-        "fullname": "Jane Doe",
+        "fullname": {
+          "firstname": "Jane",
+          "lastname": "Doe"
+        },
         "password": "password123",
         "vehicle": {
           "color": "red",
@@ -483,4 +535,29 @@ curl -X POST http://localhost:3030/captain/register \
           "vehicleType": "car"
         }
       }'
+```
+
+### Login Captain
+
+```sh
+curl -X POST http://localhost:3030/captain/login \
+  -H "Content-Type: application/json" \
+  -d '{
+        "email": "captain@example.com",
+        "password": "password123"
+      }'
+```
+
+### Get Captain Profile
+
+```sh
+curl -X GET http://localhost:3030/captain/profile \
+  -H "Authorization: Bearer <token>"
+```
+
+### Logout Captain
+
+```sh
+curl -X GET http://localhost:3030/captain/logout \
+  -H "Authorization: Bearer <token>"
 ```
