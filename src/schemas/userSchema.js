@@ -17,10 +17,6 @@ const userSchema = new mongoose.Schema(
     socketId: {
       type: String,
     },
-    // created_at: {
-    //   type: Date,
-    //   default: Date.now,
-    // },
     orders: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -55,5 +51,5 @@ userSchema.methods.hashPassword = async function (password) {
   return hashedPassword;
 };
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model("user", userSchema);
 module.exports = User;

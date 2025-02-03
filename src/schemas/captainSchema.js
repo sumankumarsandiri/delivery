@@ -50,10 +50,15 @@ const captainSchema = new mongoose.Schema(
         enum: ["bike", "car", "truck"],
       },
     },
+    // location: {
+    //   type: { type: String, enum: ["Point"], required: true },
+    //   coordinates: { type: [Number], required: true },
+    // },
     location: {
-      lat: { type: Number },
+      ltd: { type: Number },
       lng: { type: Number },
     },
+
     // orders: [
     //     {
     //     type: mongoose.Schema.Types.ObjectId,
@@ -83,6 +88,8 @@ captainSchema.methods.comparePassword = async function (password) {
 captainSchema.statics.hashPassword = async function (password) {
   return await bcrypt.hash(password, 10);
 };
+// Create a 2dsphere index
+captainSchema.index({ location: "2dsphere" });
 
-const Captain = mongoose.model("Captain", captainSchema);
+const Captain = mongoose.model("captain", captainSchema);
 module.exports = Captain;

@@ -8,6 +8,8 @@ const connectMongo = require("../config/mongoose");
 const indexRouter = require("../routes/index");
 const authRouter = require("../routes/userAuth");
 const captainRoute = require("../routes/captain.routes");
+const mapRoutes = require("../routes/maps.routes");
+const rideRoutes = require("../routes/ride.routes");
 
 const app = express();
 
@@ -31,6 +33,9 @@ app.use("/", indexRouter);
 app.use("/auth", authRouter);
 // captain is driver
 app.use("/captain", captainRoute);
+app.use("/maps", mapRoutes);
+app.use("/ride", rideRoutes);
+
 // Error handler
 app.use((err, req, res, next) => {
   // render the error page

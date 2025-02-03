@@ -393,31 +393,124 @@
 ```json
 {
   "success": 1,
-  "message": "Captain registered successfully",
+  "message": "Captain logged in successfully",
+  "status": 200,
   "data": {
     "captain": {
       "_id": "60d0fe4f5311236168a109cb",
       "fullname": {
-        "firstname": "test_captain_firstname",
-        "lastname": "test_captain_lastname"
+        "firstname": "Jane",
+        "lastname": "Doe"
       },
-      "email": "testcaptain02@gmail.com",
-      "password": "$2b$10$uVCaMRQsmYUfFMyaAFxPPeymHLbRiZzwxwiTFg/5Z2.zZwR5KXaf2",
-      "status": "inactive",
+      "email": "captain@example.com",
       "vehicle": {
         "color": "red",
         "plate": "TX 01 ER 1234",
-        "capacity": 2,
-        "vehicleType": "bike"
+        "capacity": 4,
+        "vehicleType": "car"
       },
-      "_id": "6794dc38249561033d248f59",
-      "last_Login": "2025-01-25T12:42:32.684Z",
-      "createdAt": "2025-01-25T12:42:32.688Z",
-      "updatedAt": "2025-01-25T12:42:32.688Z",
-      "__v": 0
+      "createdAt": "2023-10-10T10:00:00.000Z",
+      "updatedAt": "2023-10-10T10:00:00.000Z"
     },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI...."
-  },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+- **Status Code:** 400 Bad Request
+- **Response Body:**
+
+```json
+{
+  "errors": [
+    {
+      "msg": "Invalid Email",
+      "param": "email",
+      "location": "body"
+    },
+    {
+      "msg": "Password must be at least 6 characters long",
+      "param": "password",
+      "location": "body"
+    }
+  ]
+}
+```
+
+### 8. Get Captain Profile
+
+**Endpoint:** `/captain/profile`
+
+**Method:** `GET`
+
+**Description:** This endpoint retrieves the profile of the authenticated captain.
+
+**Headers:**
+
+- Authorization: Bearer <token>
+
+**Response:**
+
+- **Status Code:** 200 OK
+- **Response Body:**
+
+```json
+{
+  "success": 1,
+  "message": "Captain profile retrieved successfully",
+  "status": 200,
+  "data": {
+    "captain": {
+      "_id": "60d0fe4f5311236168a109cb",
+      "fullname": {
+        "firstname": "Jane",
+        "lastname": "Doe"
+      },
+      "email": "captain@example.com",
+      "vehicle": {
+        "color": "red",
+        "plate": "TX 01 ER 1234",
+        "capacity": 4,
+        "vehicleType": "car"
+      },
+      "createdAt": "2023-10-10T10:00:00.000Z",
+      "updatedAt": "2023-10-10T10:00:00.000Z"
+    }
+  }
+}
+```
+
+- **Status Code:** 401 Unauthorized
+- **Response Body:**
+
+```json
+{
+  "success": 0,
+  "message": "Invalid or expired token"
+}
+```
+
+### 9. Logout Captain
+
+**Endpoint:** `/captain/logout`
+
+**Method:** `GET`
+
+**Description:** This endpoint logs out the authenticated captain.
+
+**Headers:**
+
+- Authorization: Bearer <token>
+
+**Response:**
+
+- **Status Code:** 200 OK
+- **Response Body:**
+
+```json
+{
+  "success": 1,
+  "message": "Captain logged out successfully",
   "status": 200
 }
 ```
@@ -429,6 +522,333 @@
 {
   "success": 0,
   "message": "Invalid or expired token"
+}
+```
+
+### 10. Create Ride
+
+**Endpoint:** `/ride/create`
+
+**Method:** `POST`
+
+**Description:** This endpoint creates a new ride.
+
+**Request Body:**
+
+```json
+{
+  "pickup": "123 Main St, City, Country",
+  "destination": "456 Elm St, City, Country",
+  "vehicleType": "car"
+}
+```
+
+**Response:**
+
+- **Status Code:** 201 Created
+- **Response Body:**
+
+```json
+{
+  "_id": "60d0fe4f5311236168a109cc",
+  "user": "60d0fe4f5311236168a109ca",
+  "pickup": "123 Main St, City, Country",
+  "destination": "456 Elm St, City, Country",
+  "otp": "123456",
+  "fare": 100,
+  "status": "pending",
+  "createdAt": "2023-10-10T10:00:00.000Z",
+  "updatedAt": "2023-10-10T10:00:00.000Z"
+}
+```
+
+- **Status Code:** 400 Bad Request
+- **Response Body:**
+
+```json
+{
+  "errors": [
+    {
+      "msg": "Invalid pickup address",
+      "param": "pickup",
+      "location": "body"
+    },
+    {
+      "msg": "Invalid destination address",
+      "param": "destination",
+      "location": "body"
+    },
+    {
+      "msg": "Invalid vehicle type",
+      "param": "vehicleType",
+      "location": "body"
+    }
+  ]
+}
+```
+
+### 11. Get Fare
+
+**Endpoint:** `/ride/get-fare`
+
+**Method:** `GET`
+
+**Description:** This endpoint retrieves the fare for a ride.
+
+**Query Parameters:**
+
+- `pickup`: The pickup address
+- `destination`: The destination address
+
+**Response:**
+
+- **Status Code:** 200 OK
+- **Response Body:**
+
+```json
+{
+  "fare": {
+    "auto": 50,
+    "car": 100,
+    "moto": 30
+  }
+}
+```
+
+- **Status Code:** 400 Bad Request
+- **Response Body:**
+
+```json
+{
+  "errors": [
+    {
+      "msg": "Invalid pickup address",
+      "param": "pickup",
+      "location": "query"
+    },
+    {
+      "msg": "Invalid destination address",
+      "param": "destination",
+      "location": "query"
+    }
+  ]
+}
+```
+
+### 12. Confirm Ride
+
+**Endpoint:** `/ride/confirm`
+
+**Method:** `POST`
+
+**Description:** This endpoint confirms a ride.
+
+**Request Body:**
+
+```json
+{
+  "rideId": "60d0fe4f5311236168a109cc"
+}
+```
+
+**Response:**
+
+- **Status Code:** 200 OK
+- **Response Body:**
+
+```json
+{
+  "success": 1,
+  "message": "Ride confirmed successfully",
+  "status": 200,
+  "data": {
+    "_id": "60d0fe4f5311236168a109cc",
+    "user": {
+      "_id": "60d0fe4f5311236168a109ca",
+      "fullname": "John Doe",
+      "email": "user@example.com"
+    },
+    "captain": {
+      "_id": "60d0fe4f5311236168a109cb",
+      "fullname": {
+        "firstname": "Jane",
+        "lastname": "Doe"
+      },
+      "email": "captain@example.com",
+      "vehicle": {
+        "color": "red",
+        "plate": "TX 01 ER 1234",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
+    },
+    "pickup": "123 Main St, City, Country",
+    "destination": "456 Elm St, City, Country",
+    "otp": "123456",
+    "fare": 100,
+    "status": "accepted",
+    "createdAt": "2023-10-10T10:00:00.000Z",
+    "updatedAt": "2023-10-10T10:00:00.000Z"
+  }
+}
+```
+
+- **Status Code:** 400 Bad Request
+- **Response Body:**
+
+```json
+{
+  "errors": [
+    {
+      "msg": "Invalid ride id",
+      "param": "rideId",
+      "location": "body"
+    }
+  ]
+}
+```
+
+### 13. Start Ride
+
+**Endpoint:** `/ride/pickup-ride`
+
+**Method:** `GET`
+
+**Description:** This endpoint starts a ride.
+
+**Query Parameters:**
+
+- `rideId`: The ride ID
+- `otp`: The OTP for the ride
+
+**Response:**
+
+- **Status Code:** 200 OK
+- **Response Body:**
+
+```json
+{
+  "success": 1,
+  "message": "Ride started successfully",
+  "status": 200,
+  "data": {
+    "_id": "60d0fe4f5311236168a109cc",
+    "user": {
+      "_id": "60d0fe4f5311236168a109ca",
+      "fullname": "John Doe",
+      "email": "user@example.com"
+    },
+    "captain": {
+      "_id": "60d0fe4f5311236168a109cb",
+      "fullname": {
+        "firstname": "Jane",
+        "lastname": "Doe"
+      },
+      "email": "captain@example.com",
+      "vehicle": {
+        "color": "red",
+        "plate": "TX 01 ER 1234",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
+    },
+    "pickup": "123 Main St, City, Country",
+    "destination": "456 Elm St, City, Country",
+    "otp": "123456",
+    "fare": 100,
+    "status": "ongoing",
+    "createdAt": "2023-10-10T10:00:00.000Z",
+    "updatedAt": "2023-10-10T10:00:00.000Z"
+  }
+}
+```
+
+- **Status Code:** 400 Bad Request
+- **Response Body:**
+
+```json
+{
+  "errors": [
+    {
+      "msg": "Invalid ride id",
+      "param": "rideId",
+      "location": "query"
+    },
+    {
+      "msg": "Invalid OTP",
+      "param": "otp",
+      "location": "query"
+    }
+  ]
+}
+```
+
+### 14. Complete Ride
+
+**Endpoint:** `/ride/complete-ride`
+
+**Method:** `GET`
+
+**Description:** This endpoint completes a ride.
+
+**Query Parameters:**
+
+- `rideId`: The ride ID
+
+**Response:**
+
+- **Status Code:** 200 OK
+- **Response Body:**
+
+```json
+{
+  "success": 1,
+  "message": "Ride completed successfully",
+  "status": 200,
+  "data": {
+    "_id": "60d0fe4f5311236168a109cc",
+    "user": {
+      "_id": "60d0fe4f5311236168a109ca",
+      "fullname": "John Doe",
+      "email": "user@example.com"
+    },
+    "captain": {
+      "_id": "60d0fe4f5311236168a109cb",
+      "fullname": {
+        "firstname": "Jane",
+        "lastname": "Doe"
+      },
+      "email": "captain@example.com",
+      "vehicle": {
+        "color": "red",
+        "plate": "TX 01 ER 1234",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
+    },
+    "pickup": "123 Main St, City, Country",
+    "destination": "456 Elm St, City, Country",
+    "otp": "123456",
+    "fare": 100,
+    "status": "completed",
+    "createdAt": "2023-10-10T10:00:00.000Z",
+    "updatedAt": "2023-10-10T10:00:00.000Z"
+  }
+}
+```
+
+- **Status Code:** 400 Bad Request
+- **Response Body:**
+
+```json
+{
+  "errors": [
+    {
+      "msg": "Invalid ride id",
+      "param": "rideId",
+      "location": "query"
+    }
+  ]
 }
 ```
 
@@ -469,6 +889,26 @@ Send a GET request to `/captain/profile` with the Authorization header containin
 ### Logout Captain:
 
 Send a GET request to `/captain/logout` with the Authorization header containing a valid JWT token.
+
+### Create Ride:
+
+Send a POST request to `/ride/create` with the required fields in the request body.
+
+### Get Fare:
+
+Send a GET request to `/ride/get-fare` with the required query parameters.
+
+### Confirm Ride:
+
+Send a POST request to `/ride/confirm` with the required fields in the request body.
+
+### Start Ride:
+
+Send a GET request to `/ride/pickup-ride` with the required query parameters.
+
+### Complete Ride:
+
+Send a GET request to `/ride/complete-ride` with the required query parameters.
 
 ## Example Requests
 
@@ -560,4 +1000,52 @@ curl -X GET http://localhost:3030/captain/profile \
 ```sh
 curl -X GET http://localhost:3030/captain/logout \
   -H "Authorization: Bearer <token>"
+```
+
+### Create Ride
+
+```sh
+curl -X POST http://localhost:3030/ride/create \
+  -H "Content-Type: application/json" \
+  -d '{
+        "pickup": "123 Main St, City, Country",
+        "destination": "456 Elm St, City, Country",
+        "vehicleType": "car"
+      }'
+```
+
+### Get Fare
+
+```sh
+curl -X GET http://localhost:3030/ride/get-fare \
+  -G \
+  --data-urlencode "pickup=123 Main St, City, Country" \
+  --data-urlencode "destination=456 Elm St, City, Country"
+```
+
+### Confirm Ride
+
+```sh
+curl -X POST http://localhost:3030/ride/confirm \
+  -H "Content-Type: application/json" \
+  -d '{
+        "rideId": "60d0fe4f5311236168a109cc"
+      }'
+```
+
+### Start Ride
+
+```sh
+curl -X GET http://localhost:3030/ride/pickup-ride \
+  -G \
+  --data-urlencode "rideId=60d0fe4f5311236168a109cc" \
+  --data-urlencode "otp=123456"
+```
+
+### Complete Ride
+
+```sh
+curl -X GET http://localhost:3030/ride/complete-ride \
+  -G \
+  --data-urlencode "rideId=60d0fe4f5311236168a109cc"
 ```

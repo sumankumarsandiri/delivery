@@ -6,6 +6,7 @@
 var app = require("../src/app.js");
 var debug = require("debug")("locos:server");
 var http = require("http");
+const { initializeSocket } = require("../src/socket.js");
 
 // var port = process.env.PORT || "3030";
 // app.set("port", port);
@@ -16,6 +17,7 @@ app.set("port", port);
  */
 
 var server = http.createServer(app);
+initializeSocket(server);
 
 server.listen(port);
 server.on("error", onError);
