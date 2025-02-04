@@ -51,8 +51,6 @@ const getFare = async (pickup, destination) => {
   return fare;
 };
 
-// module.exports.getFare = getFare;
-
 function getOtp(num) {
   function generateOtp(num) {
     const otp = crypto
@@ -75,6 +73,7 @@ const createRide = async ({ user, pickup, destination, vehicleType }) => {
     pickup,
     destination,
     otp: getOtp(6),
+    deliveryOtp: getOtp(6),
     fare: fare[vehicleType],
   });
 
@@ -133,15 +132,9 @@ const startRide = async ({ rideId, otp, captain }) => {
     })
     .select("+otp");
 
-  // console.log("checking ride..........:", ride);
-
   if (!ride) {
     throw new Error("Ride not found");
   }
-
-  // if (ride.status !== "accepted") {
-  //   throw new Error("Ride not accepted");
-  // }
 
   if (ride.otp !== otp) {
     throw new Error("Invalid OTP");
@@ -178,7 +171,7 @@ const startRide = async ({ rideId, otp, captain }) => {
   return context;
 };
 
-const endRide = async ({ rideId, captain }) => {
+const endRide = async ({ rideId, deliveryOtp, captain }) => {
   const context = {
     success: 1,
     message: "pickupRide ended successfully",
@@ -186,19 +179,9 @@ const endRide = async ({ rideId, captain }) => {
   };
 
   // Validate input
-  if (!rideId) {
+  if (!rideId || !deliveryOtp) {
     throw new Error("Ride id is required");
   }
-
-  // if (!rideId) {
-  //   throw new Error("Ride id is required");
-  // }
-
-  // const ride = await rideModel
-  //   .findOne({
-  //     _id: rideId,
-  //     captain: captain._id,
-  //   })
 
   const ride = await rideModel
     // .findOne({
@@ -216,31 +199,49 @@ const endRide = async ({ rideId, captain }) => {
       path: "captain",
       select: "_id fullname email vehicle status", // Selecting only required fields from user
     })
-    .select("+otp");
-  console.log(ride, "ride");
+    .select("+deliveryOtp");
+  // .select("+otp");
+  // console.log("checking................", ride);
 
   if (!ride) {
     throw new Error("Ride not found");
   }
 
-  // if (!ride.status || ride.status !== "ongoing") {
-  //   throw new Error("Ride not ongoing");
+  // if (ride.deliveryOtp !== deliveryOtp) {
+  //   throw new Error("Invalid delivery OTP");
   // }
-  const updateRide = await rideModel.findOneAndUpdate(
-    { _id: rideId },
-    { status: "completed" },
-    { new: true }
-  );
 
-  console.log(updateRide, "updateRide");
+  // const updateRide = await rideModel.findOneAndUpdate(
+  //   { _id: rideId },
+  //   { status: "completed" },
+  //   { packageStatus: "delivered" },
+  //   { new: true }
+  // );
+
+  const updateRide = await rideModel
+    .findOneAndUpdate(
+      { _id: rideId },
+      { status: "completed", packageStatus: "delivered" },
+      { new: true } // Returns the updated ride document
+    )
+    .populate({
+      path: "user",
+      select: "_id fullname email destination fare status pickup", // Selecting only required fields from user
+    })
+    .populate({
+      path: "captain",
+      select: "fullname.firstname fullname.lastname email vehicle", // Selecting only required fields from user
+    });
+
   if (!updateRide) {
     throw new Error("Failed to update ride status");
   }
+  console.log("updated checking....", updateRide);
   updateRide.save();
-  console.log("updated", updateRide);
   context.data = updateRide;
+  console.log("updated or not", updateRide);
 
-  return context;
+  return ride;
 };
 
 module.exports = {

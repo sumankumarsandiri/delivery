@@ -27,6 +27,11 @@ const rideSchema = new mongoose.Schema({
     enum: ["pending", "accepted", "ongoing", "completed", "cancelled"],
     default: "pending",
   },
+  packageStatus: {
+    type: String,
+    enum: ["pending", "delivered"],
+    default: "pending",
+  },
 
   duration: {
     type: Number,
@@ -47,6 +52,16 @@ const rideSchema = new mongoose.Schema({
   },
 
   otp: {
+    type: String,
+    select: false,
+    required: true,
+  },
+  // pickupOtp: {
+  //   type: String,
+  //   select: false,
+  //   required: true,
+  // },
+  deliveryOtp: {
     type: String,
     select: false,
     required: true,

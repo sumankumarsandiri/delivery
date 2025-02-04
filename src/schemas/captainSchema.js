@@ -58,7 +58,12 @@ const captainSchema = new mongoose.Schema(
       ltd: { type: Number },
       lng: { type: Number },
     },
-
+    deliveries: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ride",
+      },
+    ],
     // orders: [
     //     {
     //     type: mongoose.Schema.Types.ObjectId,

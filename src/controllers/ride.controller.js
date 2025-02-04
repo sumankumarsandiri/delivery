@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const mapService = require("../services/maps.service");
 const { sendMessageToSocketId } = require("../socket");
 const rideModel = require("../schemas/rideSchema");
+const Captain = require("../schemas/captainSchema"); // Import Captain model
 
 const createRide = async (req, res) => {
   const errors = validationResult(req);
@@ -45,13 +46,15 @@ const createRide = async (req, res) => {
       return;
     }
 
-    ride.otp = "";
-
     const rideWithUser = await rideModel
       .findOne({ _id: ride._id })
       .populate("user");
 
-    captainsInRadius.map((captain) => {
+    captainsInRadius.map(async (captain) => {
+      // Add the ride to the captain's deliveries
+      await Captain.findByIdAndUpdate(captain._id, {
+        $push: { deliveries: ride._id },
+      });
       sendMessageToSocketId(captain.socketId, {
         event: "new-ride",
         data: rideWithUser,
@@ -120,15 +123,12 @@ const confirmRide = async (req, res) => {
       console.warn(`User ${ride.user._id} does not have a socketId.`);
     }
 
-    // return res.status(200).json(ride);
-
     context.data = ride;
     console.log("Ride confirmed successfully:", ride);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: err.message });
   }
-  //   context = response(context);
   res.status(200).send(context);
 };
 
@@ -161,20 +161,8 @@ const startRide = async (req, res) => {
       captain: req.captain,
     });
 
-    console.log(ride);
-    // Check if the ride exists and ensure user socketId exists before sending the message
-    // if (!ride || !ride.user || !ride.user.socketId) {
-    //   throw new Error("User or socketId not found");
-    // }
-
-    // sendMessageToSocketId(ride.user.socketId, {
-    //   event: "ride-started",
-    //   data: ride,
-    // });
-
     context.data = ride.data;
     console.log("Ride started successfully:", ride);
-    // return res.status(200).json(context);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -182,22 +170,39 @@ const startRide = async (req, res) => {
 };
 
 const endRide = async (req, res) => {
+  const context = {
+    success: 1,
+    message: "PickUp-Ride ended successfully",
+    data: {},
+    status: 200,
+  };
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { rideId } = req.body;
+  const { rideId, deliveryOtp } = req.body;
+
+  if (!rideId || !deliveryOtp) {
+    return res.status(400).json({
+      success: 0,
+      message: "Ride ID and OTP are required",
+    });
+  }
 
   try {
-    const ride = await rideService.endRide({ rideId, captain: req.captain });
+    const ride = await rideService.endRide({
+      rideId,
+      deliveryOtp,
+      captain: req.captain,
+    });
 
     // sendMessageToSocketId(ride.user.socketId, {
     //   event: "ride-ended",
     //   data: ride,
     // });
 
-    return res.status(200).json(ride);
+    return res.status(200).json(context);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }

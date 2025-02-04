@@ -787,13 +787,17 @@
 
 **Endpoint:** `/ride/complete-ride`
 
-**Method:** `GET`
+**Method:** `POST`
 
 **Description:** This endpoint completes a ride.
 
-**Query Parameters:**
+**Request Body:**
 
-- `rideId`: The ride ID
+```json
+{
+  "rideId": "60d0fe4f5311236168a109cc"
+}
+```
 
 **Response:**
 
@@ -846,7 +850,7 @@
     {
       "msg": "Invalid ride id",
       "param": "rideId",
-      "location": "query"
+      "location": "body"
     }
   ]
 }
@@ -908,7 +912,7 @@ Send a GET request to `/ride/pickup-ride` with the required query parameters.
 
 ### Complete Ride:
 
-Send a GET request to `/ride/complete-ride` with the required query parameters.
+Send a POST request to `/ride/complete-ride` with the required fields in the request body.
 
 ## Example Requests
 
@@ -1045,7 +1049,9 @@ curl -X GET http://localhost:3030/ride/pickup-ride \
 ### Complete Ride
 
 ```sh
-curl -X GET http://localhost:3030/ride/complete-ride \
-  -G \
-  --data-urlencode "rideId=60d0fe4f5311236168a109cc"
+curl -X POST http://localhost:3030/ride/complete-ride \
+  -H "Content-Type: application/json" \
+  -d '{
+        "rideId": "60d0fe4f5311236168a109cc"
+      }'
 ```

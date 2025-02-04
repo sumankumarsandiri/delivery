@@ -58,6 +58,10 @@ router.post(
   "/end-ride",
   authMiddleware.authCaptain,
   body("rideId").isMongoId().withMessage("Invalid ride id"),
+  body("deliveryOtp")
+    .notEmpty()
+    .isLength({ min: 6, max: 6 })
+    .withMessage("Invalid delivery OTP"),
   rideController.endRide
 );
 
